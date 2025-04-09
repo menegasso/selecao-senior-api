@@ -6,6 +6,8 @@ import com.selecao.senior.api.exception.ResourceNotFoundException;
 import com.selecao.senior.api.repository.ServidorEfetivoRepository;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -21,9 +23,9 @@ public class ServidorEfetivoService {
     @Autowired
     private ServidorEfetivoRepository repository;
 
-    public List<ServidorEfetivoDto> findAll() {
-        List<ServidorEfetivo> list = repository.findAll();
-        return list.stream().map(this::convertToDto).collect(Collectors.toList());
+    public Page<ServidorEfetivoDto> findAll(Pageable pageable) {
+        Page<ServidorEfetivo> page = repository.findAll(pageable);
+        return page.map(this::convertToDto);
     }
 
     public ServidorEfetivoDto findById(Long id) {

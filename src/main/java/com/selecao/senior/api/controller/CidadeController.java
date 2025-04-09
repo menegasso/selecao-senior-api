@@ -4,6 +4,8 @@ import com.selecao.senior.api.dto.CidadeDto;
 import com.selecao.senior.api.service.CidadeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +21,10 @@ public class CidadeController {
     private CidadeService cidadeService;
 
     @GetMapping
-    public ResponseEntity<List<CidadeDto>> getAll() {
-        return ResponseEntity.ok(cidadeService.findAll());
+    public ResponseEntity<Page<CidadeDto>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(cidadeService.findAll(pageable));
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<CidadeDto> getById(@PathVariable Long id) {

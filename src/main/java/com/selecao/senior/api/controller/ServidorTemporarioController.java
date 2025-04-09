@@ -4,6 +4,8 @@ import com.selecao.senior.api.dto.ServidorTemporarioDto;
 import com.selecao.senior.api.service.ServidorTemporarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +20,9 @@ public class ServidorTemporarioController {
     private ServidorTemporarioService service;
 
     @GetMapping
-    public ResponseEntity<List<ServidorTemporarioDto>> getAll() {
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<Page<ServidorTemporarioDto>> getAll(Pageable pageable) {
+        Page<ServidorTemporarioDto> page = service.findAll(pageable);
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{id}")

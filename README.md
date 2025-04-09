@@ -40,17 +40,11 @@ A aplicação já cria automaticamente um usuário de teste:
 
 ### Obtendo Token com Postman
 
-Para autenticar e obter o token JWT usando o Postman:
-
-1. Abra o Postman.
-2. Crie uma nova requisição `POST` para:
-
-```
-http://localhost:8080/auth/login
+```http
+POST http://localhost:8080/auth/login
 ```
 
-3. No corpo da requisição, selecione o tipo `raw` e `JSON`, e insira o seguinte conteúdo:
-
+Body (raw / JSON):
 ```json
 {
   "username": "admin",
@@ -58,7 +52,60 @@ http://localhost:8080/auth/login
 }
 ```
 
-4. Envie a requisição. O token JWT será retornado na resposta e poderá ser usado nos demais endpoints protegidos.
+---
+
+## Visão Geral dos Endpoints
+
+### 📂 Auth Controller
+- `POST /auth/login` – Autenticação de usuários
+- `POST /auth/refresh` – Renovação de token JWT
+
+### 👤 Usuario Controller
+Gerenciamento de usuários do sistema:
+- CRUD completo em `/api/usuarios`
+
+### 🏢 Unidade Controller
+Gerenciamento de unidades organizacionais:
+- CRUD completo em `/api/unidades`
+
+### 📄 Servidor Temporário Controller
+Cadastro e controle de servidores temporários:
+- CRUD completo em `/api/servidores-temporarios`
+
+### 🗃️ Servidor Efetivo Controller
+Cadastro e controle de servidores efetivos:
+- CRUD completo em `/api/servidores-efetivos`
+
+### 🛡️ Role Controller
+Gerenciamento de perfis/funções de acesso:
+- CRUD parcial em `/api/roles` (sem DELETE)
+
+### 🧍 Pessoa Controller
+Gerenciamento de informações pessoais:
+- CRUD completo em `/api/pessoas`
+
+### 🧭 Lotação Controller
+Controle de lotações funcionais:
+- CRUD completo em `/api/lotacoes`
+- `GET /api/lotacoes/servidores-efetivos` – Consulta especial
+- `GET /api/lotacoes/endereco-funcional` – Consulta especial
+
+### 🖼️ Foto Pessoa Controller
+Upload e gestão de imagens (via MinIO):
+- `GET/PUT/DELETE /api/fotos-pessoa/{id}`
+- `GET /api/fotos-pessoa`
+- `POST /api/fotos-pessoa` – Cadastro de metadados de imagem
+- `POST /api/fotos-pessoa/upload` – Upload de uma imagem
+- `POST /api/fotos-pessoa/uploadMany` – Upload múltiplo
+- `GET /api/fotos-pessoa/{id}/url` – Obter URL pública da imagem
+
+### 📍 Endereço Controller
+CRUD de endereços físicos:
+- CRUD completo em `/api/enderecos`
+
+### 🏙️ Cidade Controller
+Cadastro de cidades:
+- CRUD completo em `/api/cidades`
 
 ---
 

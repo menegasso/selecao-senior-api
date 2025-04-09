@@ -4,6 +4,8 @@ import com.selecao.senior.api.dto.UnidadeDto;
 import com.selecao.senior.api.service.UnidadeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +20,10 @@ public class UnidadeController {
     private UnidadeService unidadeService;
 
     @GetMapping
-    public ResponseEntity<List<UnidadeDto>> getAll() {
-        return ResponseEntity.ok(unidadeService.findAll());
+    public ResponseEntity<Page<UnidadeDto>> getAll(Pageable pageable) {
+        Page<UnidadeDto> page = unidadeService.findAll(pageable);
+        return ResponseEntity.ok(page);
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<UnidadeDto> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(unidadeService.findById(id));

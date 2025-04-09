@@ -8,6 +8,8 @@ import com.selecao.senior.api.entity.Unidade;
 import com.selecao.senior.api.repository.UnidadeRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -22,11 +24,9 @@ public class UnidadeService {
     @Autowired
     private UnidadeRepository unidadeRepository;
 
-    public List<UnidadeDto> findAll() {
-        List<Unidade> unidades = unidadeRepository.findAll();
-        return unidades.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+    public Page<UnidadeDto> findAll(Pageable pageable) {
+        Page<Unidade> unidades = unidadeRepository.findAll(pageable);
+        return unidades.map(this::convertToDto);
     }
 
     public UnidadeDto findById(Integer id) {

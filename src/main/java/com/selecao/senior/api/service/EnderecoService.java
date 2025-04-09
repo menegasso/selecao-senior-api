@@ -9,6 +9,8 @@ import com.selecao.senior.api.repository.EnderecoRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -25,9 +27,9 @@ public class EnderecoService {
     @Autowired
     private CidadeRepository cidadeRepository;
 
-    public List<EnderecoDto> findAll() {
-        List<Endereco> enderecos = enderecoRepository.findAll();
-        return enderecos.stream().map(this::convertToDto).collect(Collectors.toList());
+    public Page<EnderecoDto> findAll(Pageable pageable) {
+        Page<Endereco> enderecos = enderecoRepository.findAll(pageable);
+        return enderecos.map(this::convertToDto);
     }
 
     public EnderecoDto findById(Integer id) {

@@ -1,12 +1,11 @@
 package com.selecao.senior.api.service;
 
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
-import io.minio.GetPresignedObjectUrlArgs;
+import io.minio.*;
 import io.minio.http.Method;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.InputStream;
 
 @Service
@@ -25,6 +24,12 @@ public class MinioService {
 
     public void uploadFile(MultipartFile file, String objectName) throws Exception {
         try (InputStream inputStream = file.getInputStream()) {
+            // Verifica se o bucket existe; se não, cria o bucket.
+            boolean isExist = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+            if (!isExist) {
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+            }
+
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)

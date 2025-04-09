@@ -8,6 +8,8 @@ import com.selecao.senior.api.entity.Pessoa;
 import com.selecao.senior.api.repository.PessoaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -22,11 +24,9 @@ public class PessoaService {
     @Autowired
     private PessoaRepository pessoaRepository;
 
-    public List<PessoaDto> findAll() {
-        List<Pessoa> pessoas = pessoaRepository.findAll();
-        return pessoas.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+    public Page<PessoaDto> findAll(Pageable pageable) {
+        return pessoaRepository.findAll(pageable)
+                .map(this::convertToDto);
     }
 
     public PessoaDto findById(Integer id) {

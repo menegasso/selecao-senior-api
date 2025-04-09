@@ -4,11 +4,14 @@ import com.selecao.senior.api.dto.PessoaDto;
 import com.selecao.senior.api.service.PessoaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/pessoas")
@@ -18,10 +21,10 @@ public class PessoaController {
     private PessoaService pessoaService;
 
     @GetMapping
-    public ResponseEntity<List<PessoaDto>> getAll() {
-        return ResponseEntity.ok(pessoaService.findAll());
+    public ResponseEntity<Page<PessoaDto>> getAll(Pageable pageable) {
+        Page<PessoaDto> page = pessoaService.findAll(pageable);
+        return ResponseEntity.ok(page);
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<PessoaDto> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(pessoaService.findById(id));

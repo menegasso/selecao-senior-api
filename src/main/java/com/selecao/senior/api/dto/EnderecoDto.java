@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "Dados do Endereço Funcional")
 public class EnderecoDto {
 
     @Schema(hidden = true)

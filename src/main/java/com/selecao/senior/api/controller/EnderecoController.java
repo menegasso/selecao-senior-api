@@ -4,6 +4,8 @@ import com.selecao.senior.api.dto.EnderecoDto;
 import com.selecao.senior.api.service.EnderecoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +20,9 @@ public class EnderecoController {
     private EnderecoService enderecoService;
 
     @GetMapping
-    public ResponseEntity<List<EnderecoDto>> getAll() {
-        return ResponseEntity.ok(enderecoService.findAll());
+    public ResponseEntity<Page<EnderecoDto>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(enderecoService.findAll(pageable));
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<EnderecoDto> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(enderecoService.findById(id));

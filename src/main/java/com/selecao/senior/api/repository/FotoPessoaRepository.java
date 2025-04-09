@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FotoPessoaRepository extends JpaRepository<FotoPessoa, Integer> {
+    FotoPessoa findTopByPessoaIdOrderByDataDesc(Long pessoaId);
 }

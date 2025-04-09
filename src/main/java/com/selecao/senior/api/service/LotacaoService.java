@@ -1,20 +1,24 @@
 package com.selecao.senior.api.service;
 
+import com.selecao.senior.api.dto.EnderecoDto;
 import com.selecao.senior.api.dto.LotacaoDto;
-import com.selecao.senior.api.entity.Lotacao;
-import com.selecao.senior.api.entity.Pessoa;
-import com.selecao.senior.api.entity.Unidade;
+import com.selecao.senior.api.dto.ServidorEfetivoLotacaoDto;
+import com.selecao.senior.api.entity.*;
 import com.selecao.senior.api.exception.ResourceNotFoundException;
-import com.selecao.senior.api.repository.LotacaoRepository;
-import com.selecao.senior.api.repository.PessoaRepository;
-import com.selecao.senior.api.repository.UnidadeRepository;
+import com.selecao.senior.api.repository.*;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,11 +35,18 @@ public class LotacaoService {
     @Autowired
     private UnidadeRepository unidadeRepository;
 
-    public List<LotacaoDto> findAll() {
-        List<Lotacao> lotacoes = lotacaoRepository.findAll();
-        return lotacoes.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+    @Autowired
+    private FotoPessoaRepository fotoPessoaRepository;
+
+    @Autowired
+    private ServidorEfetivoRepository servidorEfetivoRepository;
+
+    @Autowired
+    private MinioService minioService;
+
+    public Page<LotacaoDto> findAll(Pageable pageable) {
+        Page<Lotacao> lotacoes = lotacaoRepository.findAll(pageable);
+        return lotacoes.map(this::convertToDto);
     }
 
     public LotacaoDto findById(Long id) {
@@ -111,5 +122,64 @@ public class LotacaoService {
         lotacao.setUnidade(unidade);
 
         return lotacao;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ServidorEfetivoLotacaoDto> getServidoresEfetivosByUnidade(Long unidId) {
+        List<Lotacao> lotacoes = lotacaoRepository.findServidoresEfetivosByUnidade(unidId);
+        List<ServidorEfetivoLotacaoDto> dtos = new ArrayList<>();
+
+        for (Lotacao lot : lotacoes) {
+            if (lot.getPessoa() instanceof ServidorEfetivo) {
+                ServidorEfetivo servidor = (ServidorEfetivo) lot.getPessoa();
+                int idade = Period.between(servidor.getDataNascimento(), LocalDate.now()).getYears();
+                String unidadeNome = lot.getUnidade().getNome();
+                String fotoUrl = "";
+                var foto = fotoPessoaRepository.findTopByPessoaIdOrderByDataDesc(servidor.getId());
+                if (foto != null) {
+                    try {
+                        // Gera URL temporária com validade de 300 segundos (5 minutos)
+                        fotoUrl = minioService.getPresignedUrl(foto.getBucket(), 300);
+                    } catch (Exception e) {
+                        fotoUrl = "Erro ao gerar URL";
+                    }
+                }
+                dtos.add(new ServidorEfetivoLotacaoDto(servidor.getNome(), idade, unidadeNome, fotoUrl));
+            }
+        }
+        return dtos;
+    }
+
+    @Transactional(readOnly = true)
+    public List<EnderecoDto> getEnderecoFuncionalByNomeParcial(String nomeParcial) {
+        // Buscar servidores efetivos cujo nome contenha o trecho informado.
+        List<ServidorEfetivo> servidores = servidorEfetivoRepository.findByNomeContainingIgnoreCase(nomeParcial);
+
+        HashSet<EnderecoDto> conjuntoEnderecos = new HashSet<>();
+
+        for (ServidorEfetivo servidor : servidores) {
+            Lotacao lotacao = lotacaoRepository.findByPessoaIdAndDataRemocaoIsNull(servidor.getId());
+            if (lotacao != null) {
+                Unidade unidade = lotacao.getUnidade();
+                if (unidade.getEnderecos() != null && !unidade.getEnderecos().isEmpty()) {
+                    // Consideramos que o primeiro endereço é o funcional; ajuste se necessário.
+                    Endereco enderecoFuncional = unidade.getEnderecos().get(0);
+                    EnderecoDto enderecoDto = convertToEnderecoDto(enderecoFuncional);
+                    conjuntoEnderecos.add(enderecoDto);
+                }
+            }
+        }
+        return new ArrayList<>(conjuntoEnderecos);
+    }
+
+    private EnderecoDto convertToEnderecoDto(Endereco endereco) {
+        EnderecoDto dto = new EnderecoDto();
+        dto.setId(endereco.getId());
+        dto.setTipoLogradouro(endereco.getTipoLogradouro());
+        dto.setLogradouro(endereco.getLogradouro());
+        dto.setNumero(endereco.getNumero());
+        dto.setBairro(endereco.getBairro());
+        dto.setCidadeId(endereco.getCidade().getId());
+        return dto;
     }
 }

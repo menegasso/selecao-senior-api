@@ -7,6 +7,8 @@ import com.selecao.senior.api.repository.ServidorTemporarioRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -20,10 +22,9 @@ public class ServidorTemporarioService {
     @Autowired
     private ServidorTemporarioRepository repository;
 
-    public List<ServidorTemporarioDto> findAll() {
-        return repository.findAll().stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+    public Page<ServidorTemporarioDto> findAll(Pageable pageable) {
+        Page<ServidorTemporario> page = repository.findAll(pageable);
+        return page.map(this::convertToDto);
     }
 
     public ServidorTemporarioDto findById(Long id) {

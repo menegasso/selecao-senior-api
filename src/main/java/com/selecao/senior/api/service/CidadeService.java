@@ -7,12 +7,11 @@ import com.selecao.senior.api.repository.CidadeRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Validated
@@ -21,9 +20,9 @@ public class CidadeService {
     @Autowired
     private CidadeRepository cidadeRepository;
 
-    public List<CidadeDto> findAll() {
-        List<Cidade> cidades = cidadeRepository.findAll();
-        return cidades.stream().map(this::convertToDto).collect(Collectors.toList());
+    public Page<CidadeDto> findAll(Pageable pageable) {
+        Page<Cidade> cidades = cidadeRepository.findAll(pageable);
+        return cidades.map(this::convertToDto);
     }
 
     public CidadeDto findById(Long id) {
