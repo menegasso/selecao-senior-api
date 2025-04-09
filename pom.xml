@@ -69,7 +69,6 @@
 			<version>8.5.12</version>
 		</dependency>
 
-
 		<!-- Spring Boot DevTools -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

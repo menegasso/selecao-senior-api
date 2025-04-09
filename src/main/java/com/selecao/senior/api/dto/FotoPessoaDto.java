@@ -18,7 +18,7 @@ public class FotoPessoaDto {
     private Integer id;
 
     @NotNull(message = "O id da pessoa é obrigatório.")
-    private Long pessoaId; // Alterado de Integer para Long
+    private Long pessoaId;
 
     @NotNull(message = "A data é obrigatória.")
     private LocalDate data;

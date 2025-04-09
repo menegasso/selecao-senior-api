@@ -23,18 +23,42 @@ docker-compose up -d
 
 Após iniciar a aplicação, acesse a documentação interativa gerada pelo Swagger pelo seguinte endereço:
 
-    http://localhost:8080/swagger-ui/index.html
+[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 Certifique-se de que a aplicação esteja rodando na porta 8080.
 
-## Autenticação
+### Usando o Swagger
+
+No Swagger, para realizar a autenticação e gerar o token JWT, localize a seção **auth-controller** na lista de endpoints. A partir dessa aba, você poderá acessar o endpoint de login e testar diretamente pela interface.
+
+## Autenticação Manual (ex: Postman)
 
 A aplicação já cria automaticamente um usuário de teste:
 
 - **Usuário:** `admin`
 - **Senha:** `admin123`
 
-Utilize essas credenciais no endpoint de autenticação para gerar o token JWT e acessar os demais endpoints protegidos.
+### Obtendo Token com Postman
+
+Para autenticar e obter o token JWT usando o Postman:
+
+1. Abra o Postman.
+2. Crie uma nova requisição `POST` para:
+
+```
+http://localhost:8080/auth/login
+```
+
+3. No corpo da requisição, selecione o tipo `raw` e `JSON`, e insira o seguinte conteúdo:
+
+```json
+{
+  "username": "admin",
+  "password": "admin123"
+}
+```
+
+4. Envie a requisição. O token JWT será retornado na resposta e poderá ser usado nos demais endpoints protegidos.
 
 ---
 
