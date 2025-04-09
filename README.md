@@ -26,3 +26,16 @@ Após iniciar a aplicação, acesse a documentação interativa gerada pelo Swag
     http://localhost:8080/swagger-ui/index.html
 
 Certifique-se de que a aplicação esteja rodando na porta 8080.
+
+## Autenticação
+
+A aplicação já cria automaticamente um usuário de teste:
+
+- **Usuário:** `admin`
+- **Senha:** `admin123`
+
+Utilize essas credenciais no endpoint de autenticação para gerar o token JWT e acessar os demais endpoints protegidos.
+
+---
+
+Desenvolvido para o processo seletivo Senior.
